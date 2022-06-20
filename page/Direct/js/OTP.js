@@ -1,9 +1,0 @@
-$('#verify-otp').hide();
-$('#request-otp').on('click',function(){
-  $('#sign-in').hide();
-  $('#verify-otp').show();
-});
-$('.fa-chevron-left').on('click',function(){
-  $('#sign-in').show();
-  $('#verify-otp').hide();
-});
