@@ -1,4 +1,5 @@
 // console.info('Declaring dependencies...');
+//This is a template and will be used to upgrade the econcours website
 require('dotenv').config();
 import express from 'express';
 import { urlencoded, json } from 'body-parser';
