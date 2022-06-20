@@ -1,51 +1,16 @@
 {
-  "name": "nodejs-server-app",
-  "version": "0.1.0",
-  "description": "A template with full RESTful user account management for user-account based web apps",
-  "main": "server/build/app.js",
-  "dependencies": {
-    "@babel/runtime": "^7.15.4",
-    "bcrypt": "^5.0.1",
-    "body-parser": "^1.19.0",
-    "connect-flash": "^0.1.1",
-    "cookie-parser": "^1.4.5",
-    "dotenv": "^10.0.0",
-    "ejs": "^3.1.6",
-    "express": "^4.17.1",
-    "express-session": "^1.17.2",
-    "mongoose": "^6.0.11",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.3",
-    "passport": "^0.5.0",
-    "passport-local": "^1.0.0",
-    "rotating-file-stream": "^2.1.6",
-    "uuid": "^8.3.2"
-  },
-  "scripts": {
-    "build": "babel server/src/ --out-dir server/build --copy-files --source-maps 'inline' --ignore 'src /**/*.spec.js','src /**/*.test.js'",
-    "inspect": "npm run build && node -r source-map-support/register server/build/app.js",
-    "start": "nodemon --verbose --watch server/src --ext ejs,js,json --exec 'npm run inspect'",
-    "serve": "node server/build/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org/woodysee/user-crud-mern.git"
-  },
-  "keywords": [],
-  "author": "Woody See",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/woodysee/user-crud-mern#readme",
+  "name": "ejs",
+  "description": "Embedded JavaScript templates",
+  "version": "1.0.0",
+  "author": "TJ Holowaychuk <tj@vision-media.ca>",
+  "keywords": ["template", "engine", "ejs"],
   "devDependencies": {
-    "@babel/cli": "^7.15.7",
-    "@babel/core": "^7.15.8",
-    "@babel/node": "^7.15.8",
-    "@babel/plugin-transform-runtime": "^7.15.8",
-    "@babel/preset-env": "^7.15.8",
-    "eslint": "^7.2.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.25.2",
-    "prettier": "1.18.2",
-    "source-map-support": "^0.5.20"
+    "mocha": "*",
+    "should": "*"
+  },
+  "main": "./lib/ejs.js",
+  "repository": "git://github.com/visionmedia/ejs.git",
+  "scripts": {
+    "test": "mocha --require should --reporter spec"
   }
 }

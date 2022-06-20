@@ -1,99 +1,196 @@
-# Node.js Server App Template
+# EJS
 
-A template with full RESTful user account management for user-account based web apps
+Embedded JavaScript templates.
 
-- Database / Data store: MongoDB,
-- Server app: Node.js, Express.js
-- Views: EJS
+[![Build Status](https://travis-ci.org/visionmedia/ejs.png)](https://travis-ci.org/visionmedia/ejs)
 
-## Features of this template
+- - -
+NOTE: Version 2 of EJS makes some breaking changes with this version (notably,
+removal of the filters feature).  Work on v2 is happening here:
+https://github.com/mde/ejs
 
-### Resource-based hierarchy
+File issues for EJS v2 here: https://github.com/mde/ejs/issues
+- - -
 
-Breaking the server directory structure into resources of business logic each with its inner MVC framework (i.e. product-centric) instead of the usual MVC monolithic framework: https://github.com/i0natan/nodebestpractices/blob/master/sections/projectstructre/breakintresources.md
+## Installation
 
-### Local login strategy
+    $ npm install ejs
 
-Each user account store [both password salt and hash](https://www.getdonedone.com/building-the-optimal-user-database-model-for-your-application/) in a version-specific strategy to allow for future implementations of more secure password encryption/one-way-encoding strategies while allowing for backward compatibility of accomodating existing users with  encrypted/one-way-encoded passwords stored with older strategies.
+## Features
 
-### Style guide
+  * Complies with the [Express](http://expressjs.com) view system
+  * Static caching of intermediate JavaScript
+  * Unbuffered code for conditionals etc `<% code %>`
+  * Escapes html by default with `<%= code %>`
+  * Unescaped buffering with `<%- code %>`
+  * Supports tag customization
+  * Filter support for designer-friendly templates
+  * Includes
+  * Client-side support
+  * Newline slurping with `<% code -%>` or `<% -%>` or `<%= code -%>` or `<%- code -%>`
 
-Uses AirBNB enforced by `eslint`.
+## Example
 
-### Standardised request-response structure
+    <% if (user) { %>
+	    <h2><%= user.name %></h2>
+    <% } %>
+    
+## Try out a live example now
 
-All requests and responses mostly follow the guidelines of [JSON API](http://jsonapi.org/format/) to allow for [consistent data models](https://nordicapis.com/the-benefits-of-using-json-api/) while having the benefit of a standardised interface via HTTP between client and server applications, either internal or external.
+<a href="https://runnable.com/ejs" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
 
-### Server-side static view rendering using EJS
+## Usage
 
-Each resource has its own set of `/views/{resource}` and SHOULD be located within a folder with the name `{resource}` within its own `views/` folder. All of the `views/` folders for each initalised component will share the hierarchy, and this is to prevent conflicting file pointers during `res.render`, e.g. `server/resources/users/views/index.ejs refer to the same file as client/views/index.ejs`.
+    ejs.compile(str, options);
+    // => Function
 
-## Server app
+    ejs.render(str, options);
+    // => str
 
-Dependencies:
+## Options
 
-  - [`express`](https://www.npmjs.com/package/express)
-  - [`bodyparser`](https://www.npmjs.com/package/body-parser)
-  - [`dotenv`](https://www.npmjs.com/package/dotenv) - manage sensitive or contextual environment variables
-  - [`mongoose`](https://www.npmjs.com/package/mongoose) - NoSQL modelling (http://mongoosejs.com/)
-  - [`passport`](http://www.passportjs.org) - user local and social media authentication strategies.
-    - `passport-local` (Local).
-  - [`uuid`](https://www.npmjs.com/package/uuid) - used to generated UUIDs for unique user identifiers
-  - [`bcrypt`](https://www.npmjs.com/package/bcrypt) - string hashing library
-  - [`morgan`](https://www.npmjs.com/package/morgan) - needed for passport local strategy
-  - [`cookie-parser`](https://www.npmjs.com/package/cookie-parser) - needed for passport local strategy
-  - [`express-session`](https://www.npmjs.com/package/express-session) - needed for passport local strategy
-  - [`connect-flash`](https://www.npmjs.com/package/connect-flash) - Flash messages which are stored in sessions
+  - `cache`           Compiled functions are cached, requires `filename`
+  - `filename`        Used by `cache` to key caches
+  - `scope`           Function execution context
+  - `debug`           Output generated function body
+  - `compileDebug`    When `false` no debug instrumentation is compiled
+  - `client`          Returns standalone compiled function
+  - `open`            Open tag, defaulting to "<%"
+  - `close`           Closing tag, defaulting to "%>"
+  - *                 All others are template-local variables
 
-Developer dependencies:
+## Includes
 
-- [`@babel/core`](https://www.npmjs.com/package/@babel/core) - Foundation for Babel
-- [`@babel/cli`](https://www.npmjs.com/package/@babel/cli) - Lets Babel to be used on the command line
-- [`@babel/node`](https://www.npmjs.com/package/@babel/node) - Lets nodemon compiling with Babel presets and plugins
-- [`@babel/preset-env`](https://www.npmjs.com/package/@babel/node) - Let Babel automatically manage syntax transforms
-- [`@babel/plugin-transform-runtime`](https://babeljs.io/docs/en/6.26.3/babel-plugin-transform-runtime) - Used by Babel to [overcome regeneratorRuntime is not defined issues](https://github.com/babel/babel/issues/5085).
-- [`@babel/runtime`](https://babeljs.io/docs/en/babel-runtime) - Same as `babel-plugin-transform-runtime`, but for production.
-- [`eslint`](https://eslint.org) - Makes code consistent
-- [`eslint-config-airbnb-base`](https://www.npmjs.com/package/eslint-config-airbnb-base) - Installed automatically when initialising eslint for AirBNB styleguide
-- [`eslint-plugin-import`](https://www.npmjs.com/package/eslint-plugin-import) - Installed automatically when initialising eslint for JavaScript modules
-- [`node-source-map-support`](https://github.com/evanw/node-source-map-support) - For error tracing to the `src/` folder during development and debugging in conjunction with enabling Babel's native source mapping being implemented in npm scripts
+ Includes are relative to the template with the `include` statement,
+ for example if you have "./views/users.ejs" and "./views/user/show.ejs"
+ you would use `<% include user/show %>`. The included file(s) are literally
+ included into the template, _no_ IO is performed after compilation, thus
+ local variables are available to these included templates.
 
-## Client app (web)
+```
+<ul>
+  <% users.forEach(function(user){ %>
+    <% include user/show %>
+  <% }) %>
+</ul>
+```
 
-## Local development
+## Custom delimiters
 
-1. On project root level, install packages: `npm install`. npm manages both server and client resource dependencies.
-2. Run `npm start` or `nodemon` if you have installed it via npm globally on your machine.
+Custom delimiters can also be applied globally:
 
-## Deployment
+    var ejs = require('ejs');
+    ejs.open = '{{';
+    ejs.close = '}}';
 
-### Set up RDBs
+Which would make the following a valid template:
 
-### Set up MongoDBs
+    <h1>{{= title }}</h1>
 
-To set up a remote MongoDB, these are some options:
+## Filters
 
-- [MongoDB Atlas cluster](https://cloud.mongodb.com/v2/)
-- [mlab](https://www.mlab.com/)
-- [Amazon Web Services VPCs](https://docs.aws.amazon.com/quickstart/latest/mongodb/welcome.html)
+EJS conditionally supports the concept of "filters". A "filter chain"
+is a designer friendly api for manipulating data, without writing JavaScript.
 
-Create the following tables:
+Filters can be applied by supplying the _:_ modifier, so for example if we wish to take the array `[{ name: 'tj' }, { name: 'mape' },  { name: 'guillermo' }]` and output a list of names we can do this simply with filters:
 
-- `users`
+Template:
 
-#### References
+    <p><%=: users | map:'name' | join %></p>
 
-- [Declare multiple views locations in Express](https://stackoverflow.com/questions/11315351/multiple-view-paths-on-node-js-express)
-- [Babel Node Guide](https://github.com/babel/example-node-server)
-- [OWASP](https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet#Guidance)
-- [It's okay to store a salt next to a hash](https://security.stackexchange.com/questions/100898/why-store-a-salt-along-side-the-hashed-password)
+Output:
 
-# Other notes
+    <p>Tj, Mape, Guillermo</p>
 
-- Deciding on a full stack framework: https://webinerds.com/6-web-development-stacks-try-2017/ 
-- Best practices informational resource: https://github.com/i0natan/nodebestpractices#1-project-structure-practices
-- Folder naming conventions on best or common practices: https://gist.github.com/woodysee/f4e5dff6ede764da422f3599221c723f
-- https://www.sitepoint.com/node-js-mvc-application/
-- https://twitter.com/nodepractices/
-- [Passport JS Local Strategy template](https://github.com/passport/express-4.x-local-example/blob/master/server.js)
-- [How to connect Robo 3T to a MongoDB Atlas cluster](https://www.datduh.com/blog/2017/7/26/how-to-connect-to-mongodb-atlas-using-robo-3t-robomongo)
+Render call:
+
+    ejs.render(str, {
+        users: [
+          { name: 'tj' },
+          { name: 'mape' },
+          { name: 'guillermo' }
+        ]
+    });
+
+Or perhaps capitalize the first user's name for display:
+
+    <p><%=: users | first | capitalize %></p>
+
+## Filter list
+
+Currently these filters are available:
+
+  - first
+  - last
+  - capitalize
+  - downcase
+  - upcase
+  - sort
+  - sort_by:'prop'
+  - size
+  - length
+  - plus:n
+  - minus:n
+  - times:n
+  - divided_by:n
+  - join:'val'
+  - truncate:n
+  - truncate_words:n
+  - replace:pattern,substitution
+  - prepend:val
+  - append:val
+  - map:'prop'
+  - reverse
+  - get:'prop'
+
+## Adding filters
+
+ To add a filter simply add a method to the `.filters` object:
+ 
+```js
+ejs.filters.last = function(obj) {
+  return obj[obj.length - 1];
+};
+```
+
+## Layouts
+
+  Currently EJS has no notion of blocks, only compile-time `include`s,
+  however you may still utilize this feature to implement "layouts" by
+  simply including a header and footer like so:
+
+```html
+<% include head %>
+<h1>Title</h1>
+<p>My page</p>
+<% include foot %>
+```
+
+## client-side support
+
+  include `./ejs.js` or `./ejs.min.js` and `require("ejs").compile(str)`.
+
+## License 
+
+(The MIT License)
+
+Copyright (c) 2009-2010 TJ Holowaychuk &lt;tj@vision-media.ca&gt;
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
